@@ -1,0 +1,55 @@
+name: SonarCloud Analysis Python
+
+on:
+  push:
+    branches:
+      - main # メインブランチ名を指定
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.18' # プロジェクトで使用するPythonバージョンを指定
+
+      - name: Install dependencies (if any)
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # PoetryやPDMなど他のパッケージマネージャーを使用している場合は適宜変更
+
+      # (オプション) テストとカバレッジレポートの生成
+      - name: Run tests and generate coverage report
+        run: |
+          pip install pytest pytest-cov coverage
+          pytest --cov=./ --cov-report=xml:coverage.xml
+          # プロジェクトのテストコマンドとカバレッジ生成コマンドに合わせて調整してください。
+          # カバレッジレポートはXML形式で出力するのが一般的です。
+          # `sonar.python.coverage.reportPaths` で指定するパスと合わせます。
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # PR Decoration (コメントなど) に必要
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          # (オプション) SonarScannerの引数を追加で指定する場合
+          args: >
+            -Dsonar.python.version=3
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            # -Dsonar.projectKey=your-organization_your-repository (通常自動検出)
+            # -Dsonar.organization=your-organization (通常自動検出)
+            # 必要に応じてプロジェクト固有のプロパティを追加
+            # -Dsonar.sources=src (ソースディレクトリがルートでない場合)
+            # -Dsonar.tests=tests (テストディレクトリがルートでない場合)
