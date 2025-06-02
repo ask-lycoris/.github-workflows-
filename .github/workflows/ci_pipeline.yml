@@ -49,15 +49,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required for Pull Request decoration
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # SonarCloud token set in GitHub Secrets
-        with:
-          # These might not be necessary if you have a sonar-project.properties file.
-          # args: >
-          #   -Dsonar.organization=your-org-key
-          #   -Dsonar.projectKey=your-project-key
-          #   -Dsonar.sources=. # Adjust if your source code is not in the root
-          #   -Dsonar.host.url=https://sonarcloud.io
-          #   # Specify the path to the test coverage report (e.g., LCOV for JavaScript/TypeScript)
-          #   -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
       - name: Upload deployment artifact
         if: github.ref == 'refs/heads/main' && github.event_name == 'push' # Only upload artifact on push to main branch
