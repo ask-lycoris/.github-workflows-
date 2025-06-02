@@ -37,7 +37,7 @@ jobs:
       #     restore-keys: |
       #       ${{ runner.os }}-node-
       - name: Install dependencies
-        run: npm ci # Or yarn install, etc.
+        run: npm install # Or yarn, etc.
       - name: Run tests (including coverage report generation)
         run: npm test -- --coverage # Example: Outputting coverage with Jest
       - name: Build project (generate deployment artifact)
