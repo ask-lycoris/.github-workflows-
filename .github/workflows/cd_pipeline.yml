@@ -1,49 +1,50 @@
-name: CD - アプリケーションのデプロイ
+name: CD - Deploy Application
 
 on:
   push:
     branches:
-      - main # main ブランチへのプッシュでデプロイをトリガー
-    # または、タグ作成時にトリガーすることも可能:
+      - main # Trigger deployment on push to main branch
+    # Alternatively, you might trigger on tag creation:
     # tags:
     #   - 'v*.*.*'
 
 jobs:
   deploy:
-    name: 本番環境へのデプロイ
+    name: Deploy to Production
     runs-on: ubuntu-latest
-    # CIがパスしたことを確認してからデプロイします。
-    # これは、CIジョブが 'ci_pipeline.yml' ワークフローで 'build-and-analyze' という名前であることを前提としています。
-    # CIとCDが同じファイルにある場合は、`needs: build-and-analyze` を使用できます。
-    # 別々のファイルの場合、このチェックは、PR（CIを実行する）がマージされた後に 'main' でのみCDをトリガーすることで暗黙的に処理されます。
-    # 別ファイルでのより明示的な制御のためには、workflow_run や再利用可能なワークフローを検討するかもしれません。
-    # ここでは簡単のため、'main' ブランチの保護ルール（CIチェックのパスを必須とする）に依存します。
+    # Ensure CI has passed before deploying.
+    # This assumes your CI job is named 'build-and-analyze' in the 'ci_pipeline.yml' workflow.
+    # If your CI and CD are in the same file, you can use `needs: build-and-analyze`.
+    # If they are separate files, this check is implicitly handled by only triggering CD on 'main'
+    # after PRs (which run CI) are merged.
+    # For more explicit control with separate files, you might consider workflow_run or reusable workflows.
+    # For simplicity here, we rely on the 'main' branch protection rules (requiring CI checks to pass).
 
-    environment: production # オプション: 保護ルールとシークレットのための GitHub 環境を定義
+    environment: production # Optional: Define a GitHub environment for protection rules and secrets
 
     steps:
-      - name: コードのチェックアウト
+      - name: Checkout code
         uses: actions/checkout@v4
 
       # --------------------------------------------------------------------
-      # デプロイ環境のセットアップ & デプロイ
-      # このセクションをデプロイターゲットに応じたステップに置き換えてください
-      # (例: AWS, Azure, Google Cloud, Heroku, Docker Hub など)
+      # Setup Your Deployment Environment & Deploy
+      # Replace this section with steps specific to your deployment target
+      # (e.g., AWS, Azure, Google Cloud, Heroku, Docker Hub, etc.)
       # --------------------------------------------------------------------
-      # 例: 静的サイトを AWS S3 にデプロイ
-      # - name: AWS 認証情報の設定
+      # Example: Deploying a static site to AWS S3
+      # - name: Configure AWS credentials
       #   uses: aws-actions/configure-aws-credentials@v4
       #   with:
       #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     aws-region: us-east-1
       #
-      # - name: プロジェクトのビルド (CI で実行済みでない場合、またはアーティファクトが渡されない場合)
-      #   run: npm run build # ビルドコマンドの例
+      # - name: Build Project (if not done in CI or if artifacts are not passed)
+      #   run: npm run build # Example build command
       #
-      # - name: S3 へのデプロイ
-      #   run: aws s3 sync ./dist s3://your-s3-bucket-name --delete # S3 同期コマンドの例
+      # - name: Deploy to S3
+      #   run: aws s3 sync ./dist s3://your-s3-bucket-name --delete # Example S3 sync command
       # --------------------------------------------------------------------
 
-      - name: 実際のデプロイ処理のプレースホルダ
-        run: echo "アプリケーションをデプロイしています..." # 実際のデプロイコマンドに置き換えてください
+      - name: Placeholder for Actual Deployment
+        run: echo "Deploying application..." # Replace with your actual deployment commands
