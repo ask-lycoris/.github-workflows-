@@ -1,0 +1,52 @@
+name: CI - Build and SonarCloud Analysis
+
+on:
+  push:
+    branches:
+      - main # Or your main development branch
+      - 'feature/**'
+      - 'fix/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build-and-analyze:
+    name: Build and Analyze
+    runs-on: ubuntu-latest # Or your preferred runner
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # SonarCloud needs full history for accurate analysis, 0 for all history
+
+      # --------------------------------------------------------------------
+      # Setup Your Build Environment (Example: Node.js)
+      # Replace this section with steps specific to your project's language/framework
+      # --------------------------------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18' # Specify your Node.js version
+      # - name: Install Dependencies
+      #   run: npm ci
+      # - name: Run Tests
+      #   run: npm test
+      # - name: Build Project (if applicable)
+      #   run: npm run build
+      # --------------------------------------------------------------------
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to decorate Pull Requests
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          # If you have a sonar-project.properties file, these might not be needed.
+          # args: >
+          #   -Dsonar.organization=your-org-key
+          #   -Dsonar.projectKey=your-project-key
+          #   -Dsonar.sources=.  # Adjust if your source code is not in the root
+          #   -Dsonar.host.url=https://sonarcloud.io
+          #   # Add other SonarCloud analysis parameters if needed, e.g., for test coverage, language-specific properties.
+          #   # -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info (Example for JS/TS coverage)
