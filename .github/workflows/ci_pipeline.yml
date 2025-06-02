@@ -1,11 +1,10 @@
-name: CI - Build, Test, SonarCloud Analysis
+name: CI - Python Build, Test, SonarCloud Analysis
 
 on:
   push:
     branches:
-      - main # Or your primary development branch
+      - main
       - 'feature/**'
-      - 'fix/**'
       # Other branch patterns you want to run CI for
   pull_request:
     types: [opened, synchronize, reopened]
@@ -19,40 +18,49 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # SonarCloud needs full history for accurate analysis
+          fetch-depth: 0
+          # SonarCloud needs full history for accurate analysis, however, specified shallow clone this time.
 
       # --------------------------------------------------------------------
-      # Setup Build Environment (Example: Node.js)
-      # Replace this section with steps specific to your project's language/framework
+      # Python Environment Setup
       # --------------------------------------------------------------------
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          node-version: '20' # Specify the Node.js version used by your project
-      # - name: Restore cached dependencies (optional)
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ~/.npm # For npm
-      #     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-node-
-      - name: Install dependencies
-        run: npm install # Or yarn, etc.
-      - name: Run tests (including coverage report generation)
-        run: npm test -- --coverage # Example: Outputting coverage with Jest
-      - name: Build project (generate deployment artifact)
-        run: npm run build # Example: Build command
-      # --------------------------------------------------------------------
+          python-version: '3.9'
+          # sonar.python.version parameter in sonar-project.properties file.
 
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run tests and generate coverage report
+        run: pytest
+        
+      # --------------------------------------------------------------------
+      # SonarCloud Analysis
+      # --------------------------------------------------------------------
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required for Pull Request decoration
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # SonarCloud token set in GitHub Secrets
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Required for Pull Request decoration
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          # SonarCloud token set in GitHub Secrets
 
-      - name: Upload deployment artifact
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' # Only upload artifact on push to main branch
+      # --------------------------------------------------------------------
+      # Upload Artifacts (Optional, for inspection)
+      # --------------------------------------------------------------------
+      - name: Upload XML coverage report (for SonarCloud and inspection)
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifact # Artifact name
-          path: ./dist # Directory containing build artifacts (e.g., ./dist, ./build)
+          name: coverage-xml
+          path: coverage.xml
+
+      - name: Upload HTML coverage report (for local inspection)
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: htmlcov/
