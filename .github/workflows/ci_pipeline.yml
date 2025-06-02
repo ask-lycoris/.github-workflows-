@@ -36,6 +36,23 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
+      # (Install Python dependencies ステップの後、Run tests ステップの前に追加)
+      - name: Show workspace structure and PYTHONPATH
+        run: |
+          echo "Current working directory: $(pwd)"
+          echo "-------------------------------------"
+          echo "Listing files in workspace (${{ github.workspace }}):"
+          ls -R ${{ github.workspace }}
+          echo "-------------------------------------"
+          echo "PYTHONPATH environment variable is: $PYTHONPATH"
+          echo "-------------------------------------"
+      ###
+
+      - name: Run tests and generate coverage report
+        run: pytest
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+
       - name: Run tests and generate coverage report
         run: pytest
         env:
