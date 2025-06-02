@@ -1,0 +1,5 @@
+opencv-python
+pytest
+pytest-cov
+# もし screenshot.py が実はPyPIのパッケージであればここに追加
+# Pillow (画像処理のモックやテストデータ作成で役立つことがある)
