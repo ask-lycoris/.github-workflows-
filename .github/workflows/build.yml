@@ -12,7 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 1 
+          # Shallow clones should be disabled for a better relevancy of analysis, but used this time to shorten build time.
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
