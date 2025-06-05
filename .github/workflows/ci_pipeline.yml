@@ -52,11 +52,6 @@ jobs:
         run: pytest
         env:
           PYTHONPATH: ${{ github.workspace }}
-
-      - name: Run tests and generate coverage report
-        run: pytest
-        env:
-          PYTHONPATH: ${{ github.workspace }}
           # added PJ_ROUTE path to PYTHONPATH
         
       # --------------------------------------------------------------------
