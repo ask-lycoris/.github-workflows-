@@ -3,7 +3,8 @@ name: CD - Deploy Application
 on:
   push:
     branches:
-      - main # Trigger deployment on push to main branch
+      - main
+    # Trigger deployment on push to main branch
     # Alternatively, you might trigger on tag creation:
     # tags:
     #   - 'v*.*.*'
@@ -13,14 +14,8 @@ jobs:
     name: Deploy to Production
     runs-on: ubuntu-latest
     # Ensure CI has passed before deploying.
-    # This assumes your CI job is named 'build-and-analyze' in the 'ci_pipeline.yml' workflow.
-    # If your CI and CD are in the same file, you can use `needs: build-and-analyze`.
-    # If they are separate files, this check is implicitly handled by only triggering CD on 'main'
-    # after PRs (which run CI) are merged.
-    # For more explicit control with separate files, you might consider workflow_run or reusable workflows.
-    # For simplicity here, we rely on the 'main' branch protection rules (requiring CI checks to pass).
-
-    environment: production # Optional: Define a GitHub environment for protection rules and secrets
+    environment: production
+    # Optional: Define a GitHub environment for protection rules and secrets
 
     steps:
       - name: Checkout code
