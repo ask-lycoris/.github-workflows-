@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import numpy as np
-import cv2  # <--- この行を追加しました
+import cv2
 
 # テスト対象のスクリプトをインポート
 import pixel_art_app
