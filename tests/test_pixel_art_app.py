@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import numpy as np
+import cv2  # <--- この行を追加しました
 
 # テスト対象のスクリプトをインポート
 import pixel_art_app
@@ -25,6 +26,7 @@ class TestPixelArtApp(unittest.TestCase):
         trans_img, h, w = pixel_art_app.image_component()
 
         # --- 検証 (Assert) ---
+        # 'cv2'をインポートしたので、この行は正しく動作します
         mock_imread.assert_called_once_with("sample.png", cv2.IMREAD_UNCHANGED)
         self.assertIsNotNone(trans_img)
         # image_component内でtransposeされるため、hとwが逆になる
