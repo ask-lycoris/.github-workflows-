@@ -1,2 +1,2 @@
-# minimun_cicd-sonarcloud
+# minimum_cicd-sonarcloud
 For  minimum SonarQube CI/CD pipeline
